@@ -1,0 +1,27 @@
+name: TaskFawry CI-CD Pipeline
+
+# 1. شغل الخطة دي تلقائياً فقط لما أعمل Push على فرع main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  compile-and-test:
+    runs-on: ubuntu-latest # سيرفر لينكس مجاني من جيتهاب هيشيل الشغل
+
+    steps:
+    # الخطوة الأولى: اسحب الكود من المستودع وحطه على السيرفر
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # الخطوة الثانية: جهز بيئة الجافا (إصدار 17) على السيرفر
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    # الخطوة الثالثة: اعمل Compile واختبر الكود عشان نتأكد إن مفيش أخطاء
+    - name: Test and Build with Maven
+      run: mvn clean test
