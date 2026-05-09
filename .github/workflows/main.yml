@@ -3,6 +3,8 @@ name: TaskFawry CI-CD Pipeline
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   compile-and-test:
@@ -11,6 +13,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -19,5 +23,11 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-    - name: Test and Build with Maven
-      run: mvn clean test
+    - name: Build with Maven
+      run: mvn clean install -DskipTests
+
+    - name: Run Tests
+      run: mvn test
+
+    - name: Generate Coverage Report
+      run: mvn jacoco:report
